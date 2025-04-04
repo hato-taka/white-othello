@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from "react";
 
@@ -16,7 +16,9 @@ type Score = {
 };
 
 const initializeBoard = (): Board => {
-  const board: Board = Array.from({ length: SIZE }, () => Array(SIZE).fill(EMPTY));
+  const board: Board = Array.from({ length: SIZE }, () =>
+    Array(SIZE).fill(EMPTY)
+  );
   const mid = SIZE / 2;
   board[mid - 1][mid - 1] = WHITE;
   board[mid - 1][mid] = BLACK;
@@ -26,26 +28,50 @@ const initializeBoard = (): Board => {
 };
 
 const directions: Move[] = [
-  [-1, -1], [-1, 0], [-1, 1],
-  [0, -1],         [0, 1],
-  [1, -1], [1, 0], [1, 1]
+  [-1, -1],
+  [-1, 0],
+  [-1, 1],
+  [0, -1],
+  [0, 1],
+  [1, -1],
+  [1, 0],
+  [1, 1],
 ];
 
-const isValidMove = (board: Board, row: number, col: number, player: number): boolean => {
+const isValidMove = (
+  board: Board,
+  row: number,
+  col: number,
+  player: number
+): boolean => {
   if (board[row][col] !== EMPTY) return false;
   const opponent = player === BLACK ? WHITE : BLACK;
 
   for (const [dx, dy] of directions) {
-    let x = row + dx, y = col + dy;
+    let x = row + dx,
+      y = col + dy;
     let foundOpponent = false;
 
-    while (x >= 0 && x < SIZE && y >= 0 && y < SIZE && board[x][y] === opponent) {
+    while (
+      x >= 0 &&
+      x < SIZE &&
+      y >= 0 &&
+      y < SIZE &&
+      board[x][y] === opponent
+    ) {
       foundOpponent = true;
       x += dx;
       y += dy;
     }
 
-    if (foundOpponent && x >= 0 && x < SIZE && y >= 0 && y < SIZE && board[x][y] === player) {
+    if (
+      foundOpponent &&
+      x >= 0 &&
+      x < SIZE &&
+      y >= 0 &&
+      y < SIZE &&
+      board[x][y] === player
+    ) {
       return true;
     }
   }
@@ -64,31 +90,44 @@ const getValidMoves = (board: Board, player: number): Move[] => {
   return moves;
 };
 
-const flipDiscs = (board: Board, row: number, col: number, player: number): Board => {
-  const newBoard: Board = board.map(row => [...row]);
+const flipDiscs = (
+  board: Board,
+  row: number,
+  col: number,
+  player: number
+): Board => {
+  const newBoard: Board = board.map((row) => [...row]);
   newBoard[row][col] = player;
   const opponent = player === BLACK ? WHITE : BLACK;
 
   for (const [dx, dy] of directions) {
-    let x = row + dx, y = col + dy;
-    let path: Move[] = [];
+    let x = row + dx,
+      y = col + dy;
+    const path: Move[] = [];
 
-    while (x >= 0 && x < SIZE && y >= 0 && y < SIZE && board[x][y] === opponent) {
+    while (
+      x >= 0 &&
+      x < SIZE &&
+      y >= 0 &&
+      y < SIZE &&
+      board[x][y] === opponent
+    ) {
       path.push([x, y]);
       x += dx;
       y += dy;
     }
 
     if (x >= 0 && x < SIZE && y >= 0 && y < SIZE && board[x][y] === player) {
-      path.forEach(([px, py]) => newBoard[px][py] = player);
+      path.forEach(([px, py]) => (newBoard[px][py] = player));
     }
   }
   return newBoard;
 };
 
 const getScore = (board: Board): Score => {
-  let blackCount = 0, whiteCount = 0;
-  board.flat().forEach(cell => {
+  let blackCount = 0,
+    whiteCount = 0;
+  board.flat().forEach((cell) => {
     if (cell === BLACK) blackCount++;
     if (cell === WHITE) whiteCount++;
   });
@@ -102,6 +141,7 @@ const Othello: React.FC = () => {
   const [passCount, setPassCount] = useState<number>(0);
   const [lastMove, setLastMove] = useState<Move | null>(null);
   const [cpuMove, setCpuMove] = useState<Move | null>(null);
+  console.log("cpuMove", cpuMove);
 
   const { black, white } = getScore(board);
   const gameOver = passCount >= 2;
@@ -121,8 +161,8 @@ const Othello: React.FC = () => {
     const moves = getValidMoves(board, currentPlayer);
     setValidMoves(moves);
     if (moves.length === 0) {
-      setPassCount(prev => prev + 1);
-      setCurrentPlayer(prev => (prev === BLACK ? WHITE : BLACK));
+      setPassCount((prev) => prev + 1);
+      setCurrentPlayer((prev) => (prev === BLACK ? WHITE : BLACK));
     } else {
       setPassCount(0);
     }
@@ -130,14 +170,16 @@ const Othello: React.FC = () => {
   }, [board]);
 
   useEffect(() => {
-    if (!gameOver && currentPlayer === WHITE) {
+    if (!gameOver && currentPlayer === WHITE && board.length > 0) {
       const validMoves = getValidMoves(board, WHITE);
       if (validMoves.length > 0) {
-        const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
+        const randomMove =
+          validMoves[Math.floor(Math.random() * validMoves.length)];
         setTimeout(() => {
-          setBoard(prev => flipDiscs(prev, randomMove[0], randomMove[1], WHITE));
+          setBoard((prev) =>
+            flipDiscs(prev, randomMove[0], randomMove[1], WHITE)
+          );
           setLastMove(randomMove);
-          setCpuMove(randomMove);
           setCurrentPlayer(BLACK);
         }, 500);
       }
@@ -153,11 +195,40 @@ const Othello: React.FC = () => {
   };
 
   return (
-    <div style={{ textAlign: "center", fontFamily: "Arial, sans-serif", background: "#2c3e50", color: "white", padding: "20px", minHeight: "100vh", position: "relative" }}>
+    <div
+      style={{
+        textAlign: "center",
+        fontFamily: "Arial, sans-serif",
+        background: "#2c3e50",
+        color: "white",
+        padding: "20px",
+        minHeight: "100vh",
+        position: "relative",
+      }}
+    >
       <h1>Othello Game</h1>
-      <p>{gameOver ? "Game Over!" : `Current Player: ${currentPlayer === BLACK ? "⚫ Black" : "⚪ White"}`}</p>
-      <p>Score - ⚫ Black: {black} | ⚪ White: {white}</p>
-      <div style={{ display: "grid", gridTemplateColumns: `repeat(${SIZE}, minmax(30px, 1fr))`, background: "#27ae60", padding: "15px", borderRadius: "10px", maxWidth: "90vw", margin: "auto", border: "2px solid #14532d" }}>
+      <p>
+        {gameOver
+          ? "Game Over!"
+          : `Current Player: ${
+              currentPlayer === BLACK ? "⚫ Black" : "⚪ White"
+            }`}
+      </p>
+      <p>
+        Score - ⚫ Black: {black} | ⚪ White: {white}
+      </p>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: `repeat(${SIZE}, minmax(30px, 1fr))`,
+          background: "#27ae60",
+          padding: "15px",
+          borderRadius: "10px",
+          maxWidth: "90vw",
+          margin: "auto",
+          border: "2px solid #14532d",
+        }}
+      >
         {board.flat().map((cell, index) => {
           const row = Math.floor(index / SIZE);
           const col = index % SIZE;
@@ -174,7 +245,7 @@ const Othello: React.FC = () => {
             cursor: "pointer",
             aspectRatio: "1 / 1",
             boxSizing: "border-box",
-            border: "1px solid #14532d"
+            border: "1px solid #14532d",
           };
 
           const discStyle: React.CSSProperties = {
@@ -184,7 +255,7 @@ const Othello: React.FC = () => {
             backgroundColor: cell === BLACK ? "#2c3e50" : "#ecf0f1",
             transform: "rotateY(0deg)",
             transition: "transform 0.6s ease",
-            animation: "flip 0.6s ease"
+            animation: "flip 0.6s ease",
           };
 
           return (
@@ -204,13 +275,48 @@ const Othello: React.FC = () => {
       </div>
 
       {gameOver && (
-        <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(0, 0, 0, 0.8)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 9999 }}>
-          <div style={{ background: "white", color: "black", padding: "40px", borderRadius: "20px", textAlign: "center" }}>
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            background: "rgba(0, 0, 0, 0.8)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+          }}
+        >
+          <div
+            style={{
+              background: "white",
+              color: "black",
+              padding: "40px",
+              borderRadius: "20px",
+              textAlign: "center",
+            }}
+          >
             <h2 style={{ fontSize: "2rem" }}>Game Over</h2>
             <p style={{ fontSize: "1.5rem" }}>Winner: {winner}</p>
             <p style={{ fontSize: "1.25rem" }}>Final Score</p>
-            <p>⚫ Black: {black} | ⚪ White: {white}</p>
-            <button onClick={resetGame} style={{ marginTop: "20px", padding: "10px 20px", fontSize: "1rem", borderRadius: "8px", backgroundColor: "#2c3e50", color: "white", border: "none", cursor: "pointer" }}>
+            <p>
+              ⚫ Black: {black} | ⚪ White: {white}
+            </p>
+            <button
+              onClick={resetGame}
+              style={{
+                marginTop: "20px",
+                padding: "10px 20px",
+                fontSize: "1rem",
+                borderRadius: "8px",
+                backgroundColor: "#2c3e50",
+                color: "white",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
               Restart Game
             </button>
           </div>
