@@ -102,6 +102,19 @@ const Othello: React.FC = () => {
   const [lastMove, setLastMove] = useState<Move | null>(null);
   const [cpuMove, setCpuMove] = useState<Move | null>(null);
 
+  const { black, white } = getScore(board);
+  const gameOver = passCount >= 2;
+  const winner = black > white ? "Black" : white > black ? "White" : "Draw";
+
+  const resetGame = () => {
+    setBoard(initializeBoard());
+    setCurrentPlayer(BLACK);
+    setValidMoves(getValidMoves(initializeBoard(), BLACK));
+    setPassCount(0);
+    setLastMove(null);
+    setCpuMove(null);
+  };
+
   useEffect(() => {
     const moves = getValidMoves(board, currentPlayer);
     setValidMoves(moves);
@@ -114,7 +127,7 @@ const Othello: React.FC = () => {
   }, [board, currentPlayer]);
 
   useEffect(() => {
-    if (currentPlayer === WHITE) {
+    if (!gameOver && currentPlayer === WHITE) {
       const validMoves = getValidMoves(board, WHITE);
       if (validMoves.length > 0) {
         const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
@@ -126,7 +139,7 @@ const Othello: React.FC = () => {
         }, 500);
       }
     }
-  }, [currentPlayer, board]);
+  }, [currentPlayer, board, gameOver]);
 
   const handleClick = (row: number, col: number) => {
     if (!isValidMove(board, row, col, currentPlayer)) return;
@@ -136,12 +149,10 @@ const Othello: React.FC = () => {
     setCurrentPlayer(WHITE);
   };
 
-  const { black, white } = getScore(board);
-
   return (
-    <div style={{ textAlign: "center", fontFamily: "Arial, sans-serif", background: "#2c3e50", color: "white", padding: "20px", minHeight: "100vh" }}>
+    <div style={{ textAlign: "center", fontFamily: "Arial, sans-serif", background: "#2c3e50", color: "white", padding: "20px", minHeight: "100vh", position: "relative" }}>
       <h1>Othello Game</h1>
-      <p>{passCount >= 2 ? "Game Over!" : `Current Player: ${currentPlayer === BLACK ? "⚫ Black" : "⚪ White"}`}</p>
+      <p>{gameOver ? "Game Over!" : `Current Player: ${currentPlayer === BLACK ? "⚫ Black" : "⚪ White"}`}</p>
       <p>Score - ⚫ Black: {black} | ⚪ White: {white}</p>
       <div style={{ display: "grid", gridTemplateColumns: `repeat(${SIZE}, minmax(30px, 1fr))`, background: "#27ae60", padding: "15px", borderRadius: "10px", maxWidth: "90vw", margin: "auto", border: "2px solid #14532d" }}>
         {board.flat().map((cell, index) => {
@@ -163,19 +174,54 @@ const Othello: React.FC = () => {
             border: "1px solid #14532d"
           };
 
+          const discStyle: React.CSSProperties = {
+            width: "70%",
+            height: "70%",
+            borderRadius: "50%",
+            backgroundColor: cell === BLACK ? "#2c3e50" : "#ecf0f1",
+            transform: "rotateY(0deg)",
+            transition: "transform 0.6s ease",
+            animation: "flip 0.6s ease"
+          };
+
           return (
             <div
               key={index}
               onClick={() => handleClick(row, col)}
               style={cellStyle}
             >
-              {cell === BLACK && <div style={{ width: "70%", height: "70%", borderRadius: "50%", backgroundColor: "#2c3e50" }} />}
-              {cell === WHITE && <div style={{ width: "70%", height: "70%", borderRadius: "50%", backgroundColor: "#ecf0f1" }} />}
-              {isValid && cell === EMPTY && <span style={{ color: "#f1c40f", fontSize: "1.5rem" }}>•</span>}
+              {cell === BLACK || cell === WHITE ? (
+                <div style={discStyle} />
+              ) : isValid && cell === EMPTY ? (
+                <span style={{ color: "#f1c40f", fontSize: "1.5rem" }}>•</span>
+              ) : null}
             </div>
           );
         })}
       </div>
+
+      {gameOver && (
+        <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(0, 0, 0, 0.8)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 9999 }}>
+          <div style={{ background: "white", color: "black", padding: "40px", borderRadius: "20px", textAlign: "center" }}>
+            <h2 style={{ fontSize: "2rem" }}>Game Over</h2>
+            <p style={{ fontSize: "1.5rem" }}>Winner: {winner}</p>
+            <p style={{ fontSize: "1.25rem" }}>Final Score</p>
+            <p>⚫ Black: {black} | ⚪ White: {white}</p>
+            <button onClick={resetGame} style={{ marginTop: "20px", padding: "10px 20px", fontSize: "1rem", borderRadius: "8px", backgroundColor: "#2c3e50", color: "white", border: "none", cursor: "pointer" }}>
+              Restart Game
+            </button>
+          </div>
+        </div>
+      )}
+
+      <style>
+        {`
+          @keyframes flip {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(180deg); }
+          }
+        `}
+      </style>
     </div>
   );
 };
