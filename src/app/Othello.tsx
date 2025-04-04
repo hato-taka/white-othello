@@ -1,13 +1,21 @@
-'use client'
+'use client';
 import React, { useState, useEffect } from "react";
 
-const SIZE = 8;
-const EMPTY = 0;
-const BLACK = 1;
-const WHITE = 2;
+const SIZE: number = 8;
+const EMPTY: number = 0;
+const BLACK: number = 1;
+const WHITE: number = 2;
 
-const initializeBoard = () => {
-  const board = Array(SIZE).fill(null).map(() => Array(SIZE).fill(EMPTY));
+type Board = number[][];
+type Move = [number, number];
+
+type Score = {
+  black: number;
+  white: number;
+};
+
+const initializeBoard = (): Board => {
+  const board: Board = Array.from({ length: SIZE }, () => Array(SIZE).fill(EMPTY));
   board[3][3] = WHITE;
   board[3][4] = BLACK;
   board[4][3] = BLACK;
@@ -15,13 +23,13 @@ const initializeBoard = () => {
   return board;
 };
 
-const directions = [
+const directions: Move[] = [
   [-1, -1], [-1, 0], [-1, 1],
   [0, -1],         [0, 1],
   [1, -1], [1, 0], [1, 1]
 ];
 
-const isValidMove = (board, row, col, player) => {
+const isValidMove = (board: Board, row: number, col: number, player: number): boolean => {
   if (board[row][col] !== EMPTY) return false;
   const opponent = player === BLACK ? WHITE : BLACK;
 
@@ -42,8 +50,8 @@ const isValidMove = (board, row, col, player) => {
   return false;
 };
 
-const getValidMoves = (board, player) => {
-  const moves = [];
+const getValidMoves = (board: Board, player: number): Move[] => {
+  const moves: Move[] = [];
   for (let row = 0; row < SIZE; row++) {
     for (let col = 0; col < SIZE; col++) {
       if (isValidMove(board, row, col, player)) {
@@ -54,14 +62,14 @@ const getValidMoves = (board, player) => {
   return moves;
 };
 
-const flipDiscs = (board, row, col, player) => {
-  const newBoard = board.map(row => [...row]);
+const flipDiscs = (board: Board, row: number, col: number, player: number): Board => {
+  const newBoard: Board = board.map(row => [...row]);
   newBoard[row][col] = player;
   const opponent = player === BLACK ? WHITE : BLACK;
 
   for (const [dx, dy] of directions) {
     let x = row + dx, y = col + dy;
-    let path = [];
+    let path: Move[] = [];
 
     while (x >= 0 && x < SIZE && y >= 0 && y < SIZE && board[x][y] === opponent) {
       path.push([x, y]);
@@ -76,7 +84,7 @@ const flipDiscs = (board, row, col, player) => {
   return newBoard;
 };
 
-const getScore = (board) => {
+const getScore = (board: Board): Score => {
   let blackCount = 0, whiteCount = 0;
   board.flat().forEach(cell => {
     if (cell === BLACK) blackCount++;
@@ -85,11 +93,11 @@ const getScore = (board) => {
   return { black: blackCount, white: whiteCount };
 };
 
-const Othello = () => {
-  const [board, setBoard] = useState(initializeBoard);
-  const [currentPlayer, setCurrentPlayer] = useState(BLACK);
-  const [validMoves, setValidMoves] = useState(getValidMoves(board, BLACK));
-  const [passCount, setPassCount] = useState(0);
+const Othello: React.FC = () => {
+  const [board, setBoard] = useState<Board>(initializeBoard);
+  const [currentPlayer, setCurrentPlayer] = useState<number>(BLACK);
+  const [validMoves, setValidMoves] = useState<Move[]>(getValidMoves(board, BLACK));
+  const [passCount, setPassCount] = useState<number>(0);
 
   useEffect(() => {
     const moves = getValidMoves(board, currentPlayer);
@@ -102,7 +110,7 @@ const Othello = () => {
     }
   }, [board, currentPlayer]);
 
-  const handleClick = (row, col) => {
+  const handleClick = (row: number, col: number) => {
     if (!isValidMove(board, row, col, currentPlayer)) return;
     setBoard(flipDiscs(board, row, col, currentPlayer));
     setCurrentPlayer(currentPlayer === BLACK ? WHITE : BLACK);
