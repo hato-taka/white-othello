@@ -141,6 +141,7 @@ const Othello: React.FC = () => {
   const [passCount, setPassCount] = useState<number>(0);
   const [lastMove, setLastMove] = useState<Move | null>(null);
   const [cpuMove, setCpuMove] = useState<Move | null>(null);
+  console.log("cpuMove:", cpuMove);
 
   const { black, white } = getScore(board);
   const gameOver = passCount >= 2;
