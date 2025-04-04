@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState, useEffect } from "react";
 
 const SIZE: number = 8;
@@ -98,6 +99,8 @@ const Othello: React.FC = () => {
   const [currentPlayer, setCurrentPlayer] = useState<number>(BLACK);
   const [validMoves, setValidMoves] = useState<Move[]>(getValidMoves(board, BLACK));
   const [passCount, setPassCount] = useState<number>(0);
+  const [lastMove, setLastMove] = useState<Move | null>(null);
+  const [cpuMove, setCpuMove] = useState<Move | null>(null);
 
   useEffect(() => {
     const moves = getValidMoves(board, currentPlayer);
@@ -110,10 +113,27 @@ const Othello: React.FC = () => {
     }
   }, [board, currentPlayer]);
 
+  useEffect(() => {
+    if (currentPlayer === WHITE) {
+      const validMoves = getValidMoves(board, WHITE);
+      if (validMoves.length > 0) {
+        const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
+        setTimeout(() => {
+          setBoard(flipDiscs(board, randomMove[0], randomMove[1], WHITE));
+          setLastMove(randomMove);
+          setCpuMove(randomMove);
+          setCurrentPlayer(BLACK);
+        }, 500);
+      }
+    }
+  }, [currentPlayer, board]);
+
   const handleClick = (row: number, col: number) => {
     if (!isValidMove(board, row, col, currentPlayer)) return;
     setBoard(flipDiscs(board, row, col, currentPlayer));
-    setCurrentPlayer(currentPlayer === BLACK ? WHITE : BLACK);
+    setLastMove([row, col]);
+    setCpuMove(null);
+    setCurrentPlayer(WHITE);
   };
 
   const { black, white } = getScore(board);
@@ -128,15 +148,21 @@ const Othello: React.FC = () => {
           const row = Math.floor(index / SIZE);
           const col = index % SIZE;
           const isValid = validMoves.some(([r, c]) => r === row && c === col);
+          const isLast = lastMove && lastMove[0] === row && lastMove[1] === col;
+          const isCpu = cpuMove && cpuMove[0] === row && cpuMove[1] === col;
+
+          let borderColor = "#16a085";
+          if (isLast) borderColor = "#e74c3c";
+          else if (isValid) borderColor = "#f1c40f";
 
           return (
             <button
               key={index}
               onClick={() => handleClick(row, col)}
               style={{
-                width: "100%", height: "100%", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", 
-                background: cell === BLACK ? "#2c3e50" : cell === WHITE ? "#ecf0f1" : isValid ? "#f1c40f" : "#27ae60", 
-                cursor: "pointer", border: "2px solid #16a085", aspectRatio: "1 / 1"
+                width: "100%", height: "100%", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center",
+                background: cell === BLACK ? "#2c3e50" : cell === WHITE ? "#ecf0f1" : "#27ae60",
+                cursor: "pointer", border: `3px solid ${borderColor}`, aspectRatio: "1 / 1"
               }}
             />
           );
