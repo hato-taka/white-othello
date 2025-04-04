@@ -141,7 +141,6 @@ const Othello: React.FC = () => {
   const [passCount, setPassCount] = useState<number>(0);
   const [lastMove, setLastMove] = useState<Move | null>(null);
   const [cpuMove, setCpuMove] = useState<Move | null>(null);
-  console.log("cpuMove", cpuMove);
 
   const { black, white } = getScore(board);
   const gameOver = passCount >= 2;
@@ -166,7 +165,6 @@ const Othello: React.FC = () => {
     } else {
       setPassCount(0);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [board]);
 
   useEffect(() => {
@@ -195,39 +193,18 @@ const Othello: React.FC = () => {
   };
 
   return (
-    <div
-      style={{
-        textAlign: "center",
-        fontFamily: "Arial, sans-serif",
-        background: "#2c3e50",
-        color: "white",
-        padding: "20px",
-        minHeight: "100vh",
-        position: "relative",
-      }}
-    >
-      <h1>Othello Game</h1>
-      <p>
+    <div className="text-center font-sans bg-slate-800 text-white p-5 min-h-screen relative">
+      <h1 className="text-3xl font-bold mb-4">Othello Game</h1>
+      <p className="mb-2">
         {gameOver
           ? "Game Over!"
-          : `Current Player: ${
-              currentPlayer === BLACK ? "⚫ Black" : "⚪ White"
-            }`}
+          : `Current Player: ${currentPlayer === BLACK ? "⚫ Black" : "⚪ White"}`}
       </p>
-      <p>
-        Score - ⚫ Black: {black} | ⚪ White: {white}
-      </p>
+      <p className="mb-4">Score - ⚫ Black: {black} | ⚪ White: {white}</p>
+
       <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: `repeat(${SIZE}, minmax(30px, 1fr))`,
-          background: "#27ae60",
-          padding: "15px",
-          borderRadius: "10px",
-          maxWidth: "90vw",
-          margin: "auto",
-          border: "2px solid #14532d",
-        }}
+        className="grid gap-[1px] rounded-xl max-w-[90vw] mx-auto"
+        style={{ gridTemplateColumns: `repeat(${SIZE}, minmax(30px, 1fr))` }}
       >
         {board.flat().map((cell, index) => {
           const row = Math.floor(index / SIZE);
@@ -235,39 +212,26 @@ const Othello: React.FC = () => {
           const isValid = validMoves.some(([r, c]) => r === row && c === col);
           const isLast = lastMove && lastMove[0] === row && lastMove[1] === col;
 
-          const cellStyle: React.CSSProperties = {
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: isLast ? "#e74c3c" : "#27ae60",
-            cursor: "pointer",
-            aspectRatio: "1 / 1",
-            boxSizing: "border-box",
-            border: "1px solid #14532d",
-          };
-
-          const discStyle: React.CSSProperties = {
-            width: "70%",
-            height: "70%",
-            borderRadius: "50%",
-            backgroundColor: cell === BLACK ? "#2c3e50" : "#ecf0f1",
-            transform: "rotateY(0deg)",
-            transition: "transform 0.6s ease",
-            animation: "flip 0.6s ease",
-          };
-
           return (
             <div
               key={index}
               onClick={() => handleClick(row, col)}
-              style={cellStyle}
+              className={`w-full h-full flex items-center justify-center aspect-square border border-green-900 cursor-pointer ${isLast ? "bg-red-500" : "bg-green-600"}`}
             >
               {cell === BLACK || cell === WHITE ? (
-                <div style={discStyle} />
+                <div
+                  className="w-[70%] h-[70%] rounded-full transition-transform duration-500 animate-[flip_0.6s_ease]"
+                  style={{
+                    background:
+                      cell === BLACK
+                        ? "radial-gradient(circle at 30% 30%, #4d4d4d, #1a1a1a)"
+                        : "radial-gradient(circle at 30% 30%, #ffffff, #cccccc)",
+                    boxShadow:
+                      "inset -2px -2px 5px rgba(0,0,0,0.5), inset 2px 2px 5px rgba(255,255,255,0.3)",
+                  }}
+                />
               ) : isValid && cell === EMPTY ? (
-                <span style={{ color: "#f1c40f", fontSize: "1.5rem" }}>•</span>
+                <span className="text-yellow-400 text-xl">•</span>
               ) : null}
             </div>
           );
@@ -275,47 +239,15 @@ const Othello: React.FC = () => {
       </div>
 
       {gameOver && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            background: "rgba(0, 0, 0, 0.8)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 9999,
-          }}
-        >
-          <div
-            style={{
-              background: "white",
-              color: "black",
-              padding: "40px",
-              borderRadius: "20px",
-              textAlign: "center",
-            }}
-          >
-            <h2 style={{ fontSize: "2rem" }}>Game Over</h2>
-            <p style={{ fontSize: "1.5rem" }}>Winner: {winner}</p>
-            <p style={{ fontSize: "1.25rem" }}>Final Score</p>
-            <p>
-              ⚫ Black: {black} | ⚪ White: {white}
-            </p>
+        <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-80 flex items-center justify-center z-[9999]">
+          <div className="bg-white text-black p-10 rounded-2xl text-center">
+            <h2 className="text-2xl font-bold mb-2">Game Over</h2>
+            <p className="text-xl mb-1">Winner: {winner}</p>
+            <p className="text-lg mb-2">Final Score</p>
+            <p className="mb-4">⚫ Black: {black} | ⚪ White: {white}</p>
             <button
               onClick={resetGame}
-              style={{
-                marginTop: "20px",
-                padding: "10px 20px",
-                fontSize: "1rem",
-                borderRadius: "8px",
-                backgroundColor: "#2c3e50",
-                color: "white",
-                border: "none",
-                cursor: "pointer",
-              }}
+              className="mt-4 px-6 py-2 text-white bg-slate-800 rounded-md hover:bg-slate-700"
             >
               Restart Game
             </button>
