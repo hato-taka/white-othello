@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 
-const SIZE: number = 8;
+const SIZE: number = 6;
 const EMPTY: number = 0;
 const BLACK: number = 1;
 const WHITE: number = 2;
@@ -17,10 +17,11 @@ type Score = {
 
 const initializeBoard = (): Board => {
   const board: Board = Array.from({ length: SIZE }, () => Array(SIZE).fill(EMPTY));
-  board[3][3] = WHITE;
-  board[3][4] = BLACK;
-  board[4][3] = BLACK;
-  board[4][4] = WHITE;
+  const mid = SIZE / 2;
+  board[mid - 1][mid - 1] = WHITE;
+  board[mid - 1][mid] = BLACK;
+  board[mid][mid - 1] = BLACK;
+  board[mid][mid] = WHITE;
   return board;
 };
 
@@ -97,7 +98,7 @@ const getScore = (board: Board): Score => {
 const Othello: React.FC = () => {
   const [board, setBoard] = useState<Board>(initializeBoard);
   const [currentPlayer, setCurrentPlayer] = useState<number>(BLACK);
-  const [validMoves, setValidMoves] = useState<Move[]>(getValidMoves(board, BLACK));
+  const [validMoves, setValidMoves] = useState<Move[]>([]);
   const [passCount, setPassCount] = useState<number>(0);
   const [lastMove, setLastMove] = useState<Move | null>(null);
   const [cpuMove, setCpuMove] = useState<Move | null>(null);
@@ -107,9 +108,10 @@ const Othello: React.FC = () => {
   const winner = black > white ? "Black" : white > black ? "White" : "Draw";
 
   const resetGame = () => {
-    setBoard(initializeBoard());
+    const newBoard = initializeBoard();
+    setBoard(newBoard);
     setCurrentPlayer(BLACK);
-    setValidMoves(getValidMoves(initializeBoard(), BLACK));
+    setValidMoves(getValidMoves(newBoard, BLACK));
     setPassCount(0);
     setLastMove(null);
     setCpuMove(null);
@@ -124,7 +126,8 @@ const Othello: React.FC = () => {
     } else {
       setPassCount(0);
     }
-  }, [board, currentPlayer]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [board]);
 
   useEffect(() => {
     if (!gameOver && currentPlayer === WHITE) {
@@ -132,14 +135,14 @@ const Othello: React.FC = () => {
       if (validMoves.length > 0) {
         const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
         setTimeout(() => {
-          setBoard(flipDiscs(board, randomMove[0], randomMove[1], WHITE));
+          setBoard(prev => flipDiscs(prev, randomMove[0], randomMove[1], WHITE));
           setLastMove(randomMove);
           setCpuMove(randomMove);
           setCurrentPlayer(BLACK);
         }, 500);
       }
     }
-  }, [currentPlayer, board, gameOver]);
+  }, [currentPlayer, gameOver]);
 
   const handleClick = (row: number, col: number) => {
     if (!isValidMove(board, row, col, currentPlayer)) return;
