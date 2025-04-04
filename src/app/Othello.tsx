@@ -70,7 +70,7 @@ const flipDiscs = (board: Board, row: number, col: number, player: number): Boar
 
   for (const [dx, dy] of directions) {
     let x = row + dx, y = col + dy;
-    let path: Move[] = [];
+    const path: Move[] = [];
 
     while (x >= 0 && x < SIZE && y >= 0 && y < SIZE && board[x][y] === opponent) {
       path.push([x, y]);
@@ -150,6 +150,7 @@ const Othello: React.FC = () => {
           const isValid = validMoves.some(([r, c]) => r === row && c === col);
           const isLast = lastMove && lastMove[0] === row && lastMove[1] === col;
           const isCpu = cpuMove && cpuMove[0] === row && cpuMove[1] === col;
+          console.log("isCpu", isCpu);
 
           let borderColor = "#16a085";
           if (isLast) borderColor = "#e74c3c";
