@@ -70,7 +70,7 @@ const flipDiscs = (board: Board, row: number, col: number, player: number): Boar
 
   for (const [dx, dy] of directions) {
     let x = row + dx, y = col + dy;
-    const path: Move[] = [];
+    let path: Move[] = [];
 
     while (x >= 0 && x < SIZE && y >= 0 && y < SIZE && board[x][y] === opponent) {
       path.push([x, y]);
@@ -143,29 +143,36 @@ const Othello: React.FC = () => {
       <h1>Othello Game</h1>
       <p>{passCount >= 2 ? "Game Over!" : `Current Player: ${currentPlayer === BLACK ? "⚫ Black" : "⚪ White"}`}</p>
       <p>Score - ⚫ Black: {black} | ⚪ White: {white}</p>
-      <div style={{ display: "grid", gridTemplateColumns: `repeat(${SIZE}, minmax(30px, 1fr))`, gap: "3px", background: "#27ae60", padding: "15px", borderRadius: "10px", maxWidth: "90vw", margin: "auto" }}>
+      <div style={{ display: "grid", gridTemplateColumns: `repeat(${SIZE}, minmax(30px, 1fr))`, background: "#27ae60", padding: "15px", borderRadius: "10px", maxWidth: "90vw", margin: "auto", border: "2px solid #14532d" }}>
         {board.flat().map((cell, index) => {
           const row = Math.floor(index / SIZE);
           const col = index % SIZE;
           const isValid = validMoves.some(([r, c]) => r === row && c === col);
           const isLast = lastMove && lastMove[0] === row && lastMove[1] === col;
-          const isCpu = cpuMove && cpuMove[0] === row && cpuMove[1] === col;
-          console.log("isCpu", isCpu);
 
-          let borderColor = "#16a085";
-          if (isLast) borderColor = "#e74c3c";
-          else if (isValid) borderColor = "#f1c40f";
+          const cellStyle: React.CSSProperties = {
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: isLast ? "#e74c3c" : "#27ae60",
+            cursor: "pointer",
+            aspectRatio: "1 / 1",
+            boxSizing: "border-box",
+            border: "1px solid #14532d"
+          };
 
           return (
-            <button
+            <div
               key={index}
               onClick={() => handleClick(row, col)}
-              style={{
-                width: "100%", height: "100%", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center",
-                background: cell === BLACK ? "#2c3e50" : cell === WHITE ? "#ecf0f1" : "#27ae60",
-                cursor: "pointer", border: `3px solid ${borderColor}`, aspectRatio: "1 / 1"
-              }}
-            />
+              style={cellStyle}
+            >
+              {cell === BLACK && <div style={{ width: "70%", height: "70%", borderRadius: "50%", backgroundColor: "#2c3e50" }} />}
+              {cell === WHITE && <div style={{ width: "70%", height: "70%", borderRadius: "50%", backgroundColor: "#ecf0f1" }} />}
+              {isValid && cell === EMPTY && <span style={{ color: "#f1c40f", fontSize: "1.5rem" }}>•</span>}
+            </div>
           );
         })}
       </div>
