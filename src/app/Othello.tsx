@@ -141,7 +141,6 @@ const Othello: React.FC = () => {
   const [passCount, setPassCount] = useState<number>(0);
   const [lastMove, setLastMove] = useState<Move | null>(null);
   const [cpuMove, setCpuMove] = useState<Move | null>(null);
-  console.log("cpuMove:", cpuMove);
 
   const { black, white } = getScore(board);
   const gameOver = passCount >= 2;
@@ -160,13 +159,18 @@ const Othello: React.FC = () => {
   useEffect(() => {
     const moves = getValidMoves(board, currentPlayer);
     setValidMoves(moves);
+
     if (moves.length === 0) {
-      setPassCount((prev) => prev + 1);
-      setCurrentPlayer((prev) => (prev === BLACK ? WHITE : BLACK));
+      if (passCount + 1 >= 2) {
+        setPassCount(2); // trigger gameOver
+      } else {
+        setPassCount(prev => prev + 1);
+        setCurrentPlayer(prev => (prev === BLACK ? WHITE : BLACK));
+      }
     } else {
       setPassCount(0);
     }
-  }, [board]);
+  }, [board, currentPlayer]);
 
   useEffect(() => {
     if (!gameOver && currentPlayer === WHITE && board.length > 0) {
@@ -199,9 +203,13 @@ const Othello: React.FC = () => {
       <p className="mb-2">
         {gameOver
           ? "Game Over!"
-          : `Current Player: ${currentPlayer === BLACK ? "⚫ Black" : "⚪ White"}`}
+          : `Current Player: ${
+              currentPlayer === BLACK ? "⚫ Black" : "⚪ White"
+            }`}
       </p>
-      <p className="mb-4">Score - ⚫ Black: {black} | ⚪ White: {white}</p>
+      <p className="mb-4">
+        Score - ⚫ Black: {black} | ⚪ White: {white}
+      </p>
 
       <div
         className="grid gap-[1px] rounded-xl max-w-[90vw] mx-auto"
@@ -217,7 +225,9 @@ const Othello: React.FC = () => {
             <div
               key={index}
               onClick={() => handleClick(row, col)}
-              className={`w-full h-full flex items-center justify-center aspect-square border border-green-900 cursor-pointer ${isLast ? "bg-red-500" : "bg-green-600"}`}
+              className={`w-full h-full flex items-center justify-center aspect-square border border-green-900 cursor-pointer ${
+                isLast ? "bg-red-500" : "bg-green-600"
+              }`}
             >
               {cell === BLACK || cell === WHITE ? (
                 <div
@@ -242,10 +252,16 @@ const Othello: React.FC = () => {
       {gameOver && (
         <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-80 flex items-center justify-center z-[9999]">
           <div className="bg-white text-black p-10 rounded-2xl text-center">
-            <h2 className="text-2xl font-bold mb-2">Game Over</h2>
             <p className="text-xl mb-1">Winner: {winner}</p>
+            {winner === "Black" && (
+              <p className="text-2xl font-bold text-green-600 mt-2">
+                おめでとうございます！
+              </p>
+            )}
             <p className="text-lg mb-2">Final Score</p>
-            <p className="mb-4">⚫ Black: {black} | ⚪ White: {white}</p>
+            <p className="mb-4">
+              ⚫ プレイヤー: {black} | ⚪ CPU: {white}
+            </p>
             <button
               onClick={resetGame}
               className="mt-4 px-6 py-2 text-white bg-slate-800 rounded-md hover:bg-slate-700"
