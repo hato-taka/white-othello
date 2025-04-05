@@ -199,7 +199,7 @@ const Othello: React.FC = () => {
 
   return (
     <div className="text-center font-sans bg-slate-800 text-white p-5 min-h-screen relative">
-      <h1 className="text-3xl font-bold mb-4">Othello Game</h1>
+      <h1 className="text-3xl font-bold mb-4">白だけオセロ</h1>
       <p className="mb-2">
         {gameOver
           ? "Game Over!"
