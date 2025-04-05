@@ -8,7 +8,6 @@ import {
   WHITE,
   Board,
   Move,
-  Score,
   initializeBoard,
   isValidMove,
   getValidMoves,
