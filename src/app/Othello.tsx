@@ -144,7 +144,7 @@ const Othello: React.FC = () => {
 
   const { black, white } = getScore(board);
   const gameOver = passCount >= 2;
-  const winner = black > white ? "Black" : white > black ? "White" : "Draw";
+  const winner = black > white ? "プレイヤー" : white > black ? "CPU" : "引き分け";
 
   const resetGame = () => {
     const newBoard = initializeBoard();
@@ -203,12 +203,10 @@ const Othello: React.FC = () => {
       <p className="mb-2">
         {gameOver
           ? "Game Over!"
-          : `Current Player: ${
-              currentPlayer === BLACK ? "⚫ Black" : "⚪ White"
-            }`}
+          : `Current Player: ${currentPlayer === BLACK ? "⚫ プレイヤー" : "⚪ CPU"}`}
       </p>
       <p className="mb-4">
-        Score - ⚫ Black: {black} | ⚪ White: {white}
+        Score - ⚫ プレイヤー: {black} | ⚪ CPU: {white}
       </p>
 
       <div
@@ -253,7 +251,7 @@ const Othello: React.FC = () => {
         <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-80 flex items-center justify-center z-[9999]">
           <div className="bg-white text-black p-10 rounded-2xl text-center">
             <p className="text-xl mb-1">Winner: {winner}</p>
-            {winner === "Black" && (
+            {winner === "プレイヤー" && (
               <p className="text-2xl font-bold text-green-600 mt-2">
                 おめでとうございます！
               </p>
