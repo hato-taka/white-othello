@@ -140,7 +140,7 @@ const Othello: React.FC = () => {
   const [validMoves, setValidMoves] = useState<Move[]>([]);
   const [passCount, setPassCount] = useState<number>(0);
   const [lastMove, setLastMove] = useState<Move | null>(null);
-  const [cpuMove, setCpuMove] = useState<Move | null>(null);
+  const [, setCpuMove] = useState<Move | null>(null);
 
   const { black, white } = getScore(board);
   const gameOver = passCount >= 2;
@@ -170,7 +170,7 @@ const Othello: React.FC = () => {
     } else {
       setPassCount(0);
     }
-  }, [board, currentPlayer]);
+  }, [board, currentPlayer, passCount]);
 
   useEffect(() => {
     if (!gameOver && currentPlayer === WHITE && board.length > 0) {
@@ -187,7 +187,7 @@ const Othello: React.FC = () => {
         }, 500);
       }
     }
-  }, [currentPlayer, gameOver]);
+  }, [currentPlayer, gameOver, board]);
 
   const handleClick = (row: number, col: number) => {
     if (!isValidMove(board, row, col, currentPlayer)) return;
