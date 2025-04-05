@@ -209,13 +209,13 @@ const Othello: React.FC = () => {
   <div className="flex flex-col items-center">
     <span className="text-sm text-gray-300 mb-1">プレイヤー</span>
     <span className="inline-block px-6 py-3 bg-white text-black text-2xl font-bold rounded-full shadow">
-      ⚫ {black}
+      ⚫ {(black + white >= SIZE * SIZE - 10 && !gameOver) ? '??' : black}
     </span>
   </div>
   <div className="flex flex-col items-center">
     <span className="text-sm text-gray-300 mb-1">CPU</span>
     <span className="inline-block px-6 py-3 bg-gray-300 text-black text-2xl font-bold rounded-full shadow">
-      ⚪ {white}
+      ⚪ {(black + white >= SIZE * SIZE - 10 && !gameOver) ? '??' : white}
     </span>
   </div>
 </div>
