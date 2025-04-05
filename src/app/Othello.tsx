@@ -205,9 +205,20 @@ const Othello: React.FC = () => {
           ? "Game Over!"
           : `Current Player: ${currentPlayer === BLACK ? "⚫ プレイヤー" : "⚪ CPU"}`}
       </p>
-      <p className="mb-4">
-        Score - ⚫ プレイヤー: {black} | ⚪ CPU: {white}
-      </p>
+      <div className="mb-6 text-lg flex justify-center gap-6">
+  <div className="flex flex-col items-center">
+    <span className="text-sm text-gray-300 mb-1">プレイヤー</span>
+    <span className="inline-block px-6 py-3 bg-white text-black text-2xl font-bold rounded-full shadow">
+      ⚫ {black}
+    </span>
+  </div>
+  <div className="flex flex-col items-center">
+    <span className="text-sm text-gray-300 mb-1">CPU</span>
+    <span className="inline-block px-6 py-3 bg-gray-300 text-black text-2xl font-bold rounded-full shadow">
+      ⚪ {white}
+    </span>
+  </div>
+</div>
 
       <div
         className="grid gap-[1px] rounded-xl max-w-[90vw] mx-auto"
