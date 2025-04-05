@@ -231,10 +231,7 @@ const Othello: React.FC = () => {
                 <div
                   className="w-[70%] h-[70%] rounded-full transition-transform duration-500 animate-[flip_0.6s_ease]"
                   style={{
-                    background:
-                      cell === BLACK
-                        ? "radial-gradient(circle at 30% 30%, #4d4d4d, #1a1a1a)"
-                        : "radial-gradient(circle at 30% 30%, #ffffff, #cccccc)",
+                    background: "radial-gradient(circle at 30% 30%, #ffffff, #cccccc)",
                     boxShadow:
                       "inset -2px -2px 5px rgba(0,0,0,0.5), inset 2px 2px 5px rgba(255,255,255,0.3)",
                   }}
