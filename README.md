@@ -1,3 +1,14 @@
+# 要件の整理
+- 遊び方は通常のオセロと一緒である
+- ただし、色は白一色である
+- 便宜上、プレイヤーは白色、CPUは黒色として画面裏で処理をする
+- 現在のスコアが表示される
+- ゲーム終盤になるとスコアが「??」で隠される
+- ゲーム終了時に、白黒の通常のオセロに戻る
+- ゲーム終了時に、スコアがモーダル表示される
+- モーダル表示には、スコアと勝者が表示される
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
