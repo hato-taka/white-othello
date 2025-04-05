@@ -135,6 +135,9 @@ const getScore = (board: Board): Score => {
 };
 
 const Othello: React.FC = () => {
+  const MAX_HINTS = 3;
+  const [hintCount, setHintCount] = useState(0);
+  const [showHint, setShowHint] = useState(false);
   const [board, setBoard] = useState<Board>(initializeBoard);
   const [currentPlayer, setCurrentPlayer] = useState<number>(BLACK);
   const [validMoves, setValidMoves] = useState<Move[]>([]);
@@ -154,6 +157,8 @@ const Othello: React.FC = () => {
     setPassCount(0);
     setLastMove(null);
     setCpuMove(null);
+    setHintCount(0);
+    setShowHint(false);
   };
 
   useEffect(() => {
@@ -194,6 +199,8 @@ const Othello: React.FC = () => {
     setBoard(flipDiscs(board, row, col, currentPlayer));
     setLastMove([row, col]);
     setCpuMove(null);
+    setShowHint(false);
+    setHintCount((prev) => prev);
     setCurrentPlayer(WHITE);
   };
 
@@ -242,7 +249,11 @@ const Othello: React.FC = () => {
                 <div
                   className="w-[70%] h-[70%] rounded-full transition-transform duration-500 animate-[flip_0.6s_ease]"
                   style={{
-                    background: "radial-gradient(circle at 30% 30%, #ffffff, #cccccc)",
+                    background: showHint
+                      ? cell === BLACK
+                        ? "radial-gradient(circle at 30% 30%, #4d4d4d, #1a1a1a)"
+                        : "radial-gradient(circle at 30% 30%, #ffffff, #cccccc)"
+                      : "radial-gradient(circle at 30% 30%, #ffffff, #cccccc)",
                     boxShadow:
                       "inset -2px -2px 5px rgba(0,0,0,0.5), inset 2px 2px 5px rgba(255,255,255,0.3)",
                   }}
@@ -253,6 +264,21 @@ const Othello: React.FC = () => {
             </div>
           );
         })}
+      </div>
+
+      <div className="mt-6">
+        <button
+          onClick={() => {
+            if (hintCount < MAX_HINTS) {
+              setShowHint(true);
+              setHintCount((prev) => prev + 1);
+            }
+          }}
+          disabled={hintCount >= MAX_HINTS}
+          className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+        >
+          ヒントを見る（残り{MAX_HINTS - hintCount}回）
+        </button>
       </div>
 
       {gameOver && (
