@@ -14,6 +14,7 @@ import {
   flipDiscs,
   getScore,
 } from "./othelloLogic";
+import GameOverModal from "./GameOverModal";
 
 const Othello: React.FC = () => {
   const MAX_HINTS = 3;
@@ -28,8 +29,7 @@ const Othello: React.FC = () => {
 
   const { black, white } = getScore(board);
   const gameOver = passCount >= 2;
-  const winner =
-    white > black ? "プレイヤー" : black > white ? "CPU" : "引き分け";
+  const winner = white > black ? "プレイヤー" : black > white ? "CPU" : "引き分け";
 
   const resetGame = () => {
     const newBoard = initializeBoard();
@@ -49,7 +49,7 @@ const Othello: React.FC = () => {
 
     if (moves.length === 0) {
       if (passCount + 1 >= 2) {
-        setPassCount(2); // trigger gameOver
+        setPassCount(2);
       } else {
         setPassCount((prev) => prev + 1);
         setCurrentPlayer((prev) => (prev === BLACK ? WHITE : BLACK));
@@ -81,7 +81,7 @@ const Othello: React.FC = () => {
     setBoard(flipDiscs(board, row, col, currentPlayer));
     setLastMove([row, col]);
     setCpuMove(null);
-    setShowHint(false); // 白だけ表示に切り替え
+    setShowHint(false);
     setHintCount((prev) => prev);
     setCurrentPlayer(BLACK);
   };
@@ -164,26 +164,12 @@ const Othello: React.FC = () => {
       </div>
 
       {gameOver && (
-        <div className="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-80 flex items-center justify-center z-[9999]">
-          <div className="bg-white text-black p-10 rounded-2xl text-center">
-            <p className="text-xl mb-1">Winner: {winner}</p>
-            {winner === "プレイヤー" && (
-              <p className="text-2xl font-bold text-green-600 mt-2">
-                おめでとうございます！
-              </p>
-            )}
-            <p className="text-lg mb-2">Final Score</p>
-            <p className="mb-4">
-              ⚪ プレイヤー: {white} | ⚫ CPU: {black}
-            </p>
-            <button
-              onClick={resetGame}
-              className="mt-4 px-6 py-2 text-white bg-slate-800 rounded-md hover:bg-slate-700"
-            >
-              Restart Game
-            </button>
-          </div>
-        </div>
+        <GameOverModal
+          winner={winner}
+          white={white}
+          black={black}
+          onRestart={resetGame}
+        />
       )}
 
       <style>
