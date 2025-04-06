@@ -12,7 +12,7 @@ import {
   isValidMove,
   getValidMoves,
   flipDiscs,
-  getScore
+  getScore,
 } from "./othelloLogic";
 
 const Othello: React.FC = () => {
@@ -28,7 +28,8 @@ const Othello: React.FC = () => {
 
   const { black, white } = getScore(board);
   const gameOver = passCount >= 2;
-  const winner = white > black ? "プレイヤー" : black > white ? "CPU" : "引き分け";
+  const winner =
+    white > black ? "プレイヤー" : black > white ? "CPU" : "引き分け";
 
   const resetGame = () => {
     const newBoard = initializeBoard();
@@ -39,7 +40,7 @@ const Othello: React.FC = () => {
     setLastMove(null);
     setCpuMove(null);
     setHintCount(0);
-    setShowHint(false);
+    setShowHint(true);
   };
 
   useEffect(() => {
@@ -50,8 +51,8 @@ const Othello: React.FC = () => {
       if (passCount + 1 >= 2) {
         setPassCount(2); // trigger gameOver
       } else {
-        setPassCount(prev => prev + 1);
-        setCurrentPlayer(prev => (prev === BLACK ? WHITE : BLACK));
+        setPassCount((prev) => prev + 1);
+        setCurrentPlayer((prev) => (prev === BLACK ? WHITE : BLACK));
       }
     } else {
       setPassCount(0);
@@ -97,19 +98,19 @@ const Othello: React.FC = () => {
         <div className="flex flex-col items-center">
           <span className="text-sm text-gray-300 mb-1">プレイヤー</span>
           <span className="inline-block px-6 py-3 bg-white text-black text-2xl font-bold rounded-full shadow">
-            ⚪ {(black + white >= SIZE * SIZE - 10 && !gameOver) ? '??' : white}
+            ⚪ {black + white >= SIZE * SIZE - 10 && !gameOver ? "??" : white}
           </span>
         </div>
         <div className="flex flex-col items-center">
           <span className="text-sm text-gray-300 mb-1">CPU</span>
           <span className="inline-block px-6 py-3 bg-gray-300 text-black text-2xl font-bold rounded-full shadow">
-            ⚫ {(black + white >= SIZE * SIZE - 10 && !gameOver) ? '??' : black}
+            ⚫ {black + white >= SIZE * SIZE - 10 && !gameOver ? "??" : black}
           </span>
         </div>
       </div>
 
       <div
-        className="grid gap-[1px] rounded-xl max-w-[90vw] mx-auto"
+        className="grid gap-[1px] rounded-xl w-full max-w-[90vw] md:max-w-[500px] mx-auto"
         style={{ gridTemplateColumns: `repeat(${SIZE}, minmax(30px, 1fr))` }}
       >
         {board.flat().map((cell, index) => {
