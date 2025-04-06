@@ -17,6 +17,7 @@ import {
 import GameOverModal from "./GameOverModal";
 
 const Othello: React.FC = () => {
+  const [showModal, setShowModal] = useState(false);
   const MAX_HINTS = 3;
   const [hintCount, setHintCount] = useState(0);
   const [showHint, setShowHint] = useState(true);
@@ -32,6 +33,7 @@ const Othello: React.FC = () => {
   const winner = white > black ? "プレイヤー" : black > white ? "CPU" : "引き分け";
 
   const resetGame = () => {
+    setShowModal(false);
     const newBoard = initializeBoard();
     setBoard(newBoard);
     setCurrentPlayer(WHITE);
@@ -50,6 +52,7 @@ const Othello: React.FC = () => {
     if (moves.length === 0) {
       if (passCount + 1 >= 2) {
         setPassCount(2);
+        setTimeout(() => setShowModal(true), 3000);
       } else {
         setPassCount((prev) => prev + 1);
         setCurrentPlayer((prev) => (prev === BLACK ? WHITE : BLACK));
@@ -81,7 +84,14 @@ const Othello: React.FC = () => {
     setBoard(flipDiscs(board, row, col, currentPlayer));
     setLastMove([row, col]);
     setCpuMove(null);
-    setShowHint(false);
+
+    const totalDiscs = board.flat().filter(cell => cell !== EMPTY).length;
+    if (totalDiscs >= SIZE * SIZE - 1) {
+      setShowHint(true);
+    } else {
+      setShowHint(false);
+    }
+
     setHintCount((prev) => prev);
     setCurrentPlayer(BLACK);
   };
@@ -163,7 +173,7 @@ const Othello: React.FC = () => {
         </button>
       </div>
 
-      {gameOver && (
+      {showModal && (
         <GameOverModal
           winner={winner}
           white={white}
