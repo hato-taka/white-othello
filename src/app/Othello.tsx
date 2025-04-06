@@ -183,6 +183,8 @@ const Othello: React.FC = () => {
         />
       )}
 
+
+
       <style>
         {`
           @keyframes flip {
