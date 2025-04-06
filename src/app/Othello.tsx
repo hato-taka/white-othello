@@ -52,6 +52,7 @@ const Othello: React.FC = () => {
     if (moves.length === 0) {
       if (passCount + 1 >= 2) {
         setPassCount(2);
+        setShowHint(true);
         setTimeout(() => setShowModal(true), 3000);
       } else {
         setPassCount((prev) => prev + 1);
