@@ -67,13 +67,33 @@ const Othello: React.FC = () => {
     if (!gameOver && currentPlayer === BLACK && board.length > 0) {
       const validMoves = getValidMoves(board, BLACK);
       if (validMoves.length > 0) {
-        const randomMove =
-          validMoves[Math.floor(Math.random() * validMoves.length)];
+        let bestMove = validMoves[0];
+        let maxScore = -Infinity;
+        const positionWeights = [
+          [100, -20, 10, 10, -20, 100],
+          [-20, -50, -2, -2, -50, -20],
+          [10, -2, -1, -1, -2, 10],
+          [10, -2, -1, -1, -2, 10],
+          [-20, -50, -2, -2, -50, -20],
+          [100, -20, 10, 10, -20, 100],
+        ];
+
+        for (const move of validMoves) {
+          const flipped = flipDiscs(board, move[0], move[1], BLACK);
+          const flippedCount = flipped.flat().filter((cell, i) => cell === BLACK && board.flat()[i] !== BLACK).length;
+          const posScore = positionWeights[move[0]][move[1]];
+          const score = flippedCount + posScore;
+
+          if (score > maxScore) {
+            maxScore = score;
+            bestMove = move;
+          }
+        }
         setTimeout(() => {
           setBoard((prev) =>
-            flipDiscs(prev, randomMove[0], randomMove[1], BLACK)
-          );
-          setLastMove(randomMove);
+          flipDiscs(prev, bestMove[0], bestMove[1], BLACK)
+        );
+        setLastMove(bestMove);
           setCurrentPlayer(WHITE);
         }, 500);
       }
@@ -182,8 +202,6 @@ const Othello: React.FC = () => {
           onRestart={resetGame}
         />
       )}
-
-
 
       <style>
         {`
