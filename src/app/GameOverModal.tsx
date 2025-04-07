@@ -25,7 +25,7 @@ const GameOverModal: React.FC<GameOverModalProps> = ({
               おめでとうございます！
             </p>
             <Link
-              href="https://pay.paypay.ne.jp/uqdw9JMfSqz9Dmw3"
+              href="https://pay.paypay.ne.jp/yKnAjnmGmqypAWT6"
               className="font-bold text-blue-600 text-2xl underline hover:text-blue-800"
             >
               賞金ゲット！
